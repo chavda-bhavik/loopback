@@ -1,0 +1,41 @@
+Relations need to configure in both way From<-->To and To<-->From
+
+1) create one comment model
+2) create Favorite model
+
+Defining Model Relations
+Types of Relations:
+    has many
+    belongs to
+    has and belongs to many
+    had one
+1) Dish to Comment (One dish can have one to many comments)
+    lb relation
+        Select model to create relationship from: (dishes)
+        RelationType: (has many)
+        Choose a model to create relationship with: (comment)
+        Enter the property name for the relation: (comments)
+        Optionally enter a custom foreign key: 
+        Require through model?: (No)
+        Allow the relation to be nested in REST APIs: (No)
+        Disable the relation from being included: (No)
+
+
+Mixins
+    Allow to add extra functionality to the site, works like plugin
+    Three Steps to flow
+    1) Install
+    2) configure
+    3) Use
+
+    Ex. use timestamp in models
+    1) Install
+        npm i loopback-ds-timestamp-mixin --save
+    2) configure
+        goto -> model-config.json
+        add mixin
+            "../node-modules/loopbackl-ds-timestamp-mixin",
+    3) Go to Model after properties configure mixin
+        "mixins": {
+            "TimeStamp": true
+        },

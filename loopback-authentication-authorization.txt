@@ -1,0 +1,22 @@
+Loopback allows to create Role and principals to use in authentication and authorization
+
+What is Principal?
+    Principal is a bridge between Role and User to do task.
+What is Role?
+    Role is Collection of tasks that are permitted to certain model.
+
+Create Static Role and assigning Principal to the Role.
+    let user = await User.create({ name: "John Doe", email: "john.doe@gmail.com", password: "johndoe" })
+    let adminRole = await Role.create({ name: "admin" })
+    let principal = await adminRole.principals.create({
+        principalType: RoleMapping.USER,
+        principalId: user._id,
+    })
+
+Now Only JohnDoe will be allowed to do task that are defined in Access Control List(ACL). Like.
+    lb acl
+        select model = <model-name> (i.e. dishes),
+        ACL Scope = A Single method,
+        access type = create,
+        role = Admin,
+        permission to apply = Explicitly grant access

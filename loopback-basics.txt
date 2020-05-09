@@ -1,0 +1,124 @@
+1) install loopback by typing
+    npm install loopback-cli -g
+
+2) create loopback project by writing command to perticular directory
+    lb <project-name> (test)
+
+3) got to project directory by 
+    cd <project-name> (test)
+
+4) create model(structure) of data we want to store in database by command
+    lb model
+        provide name for model, 
+        datasource = db(memory), 
+        base class = persistedModel,
+        Expose REST API = Yes,
+        Custom Plural = ,
+        common or server = common
+        Add Properties according to requirements
+
+5) lb datasource to setup datasource like mongodb for server
+    lb datasource
+        Give name for DataSource,
+        Select Connector, (i.e. MongoDB (supported by StrongLoop)
+        Provide Connection String for databse, (i.e. leave blank for our example)
+        Provide host, (i.e. localhost),
+        Provide Port, (i.e. 27017),
+        Provide username if any, (i.e. blank),
+        Provide password if any, (i.e. blank),
+        Provide database, (i.e. conFusion),
+        Install connector
+    datasource.json file will be modified according to configuration
+
+6) modify model-config.json file and DataSource to "MongoDB" of every field expect "ACCESS TOKEN"
+
+7) ACL = Access Control List
+
+8) Now create Customer Model that extends User Model
+    lb model
+        Give name = customers,
+        select DataSource = MongoDB,
+        model's base class = User,
+        REST API = Yes,
+        REST URL = ,
+        Common or server = common,
+        Enter properties for customer other than user because user properties are already inherited to customer
+    Now the customer model will be created with base = "User"
+
+9) Setup Access Control for various models (Access Control List)
+    (first - close every access) 
+    lb acl
+        select model = All existing models,
+        ACL Scope = All methods and properties,
+        access type = All (match all types),
+        role = All users,
+        permission to apply = Explicitly deny access
+
+    (second - open only read access) 
+    lb acl
+        select model = All existing models,
+        ACL Scope = All methods and properties,
+        access type = Read,
+        role = All users,
+        permission to apply = Explicitly grant access
+
+    (third - open and close certain access to certain kind of people)
+    (Only Admin can create resource)
+    lb acl
+        select model = <model-name> (i.e. dishes),
+        ACL Scope = A Single method,
+        access type = create,
+        role = Admin,
+        permission to apply = Explicitly grant access
+
+    (fourth - allow customer to register)
+    lb acl
+        select model = <model-name> (i.e. customers),
+        ACL Scope = A Single method,
+        access type = create,
+        role = All users,
+        permission to apply = Explicitly grant access
+
+    after this every model json file will hold "acls []", that contains all configuration of access done for that model
+
+
+    (fifth - comments operations)
+        (first Deny All)
+        lb acl
+            select model = <model-name> (i.e. comments),
+            ACL Scope = A methods and properties,
+            access type = All,
+            role = All users,
+            permission to apply = Explicitly deny access
+            
+        (second Allow only login users to read comments)
+        lb acl
+            select model = <model-name> (i.e. comments),
+            ACL Scope = A methods and properties,
+            access type = Read,
+            role = Any authenticated user,
+            permission to apply = Explicitly grant access
+
+        (third Allow only login users to write comments)
+        lb acl
+            select model = <model-name> (i.e. comments),
+            ACL Scope = A single method,
+            method name: create,
+            role: Any authenticated user,
+            permission to apply = Explicitly grant access
+
+        (third Allow only login users to write comments)
+        lb acl
+            select model = <model-name> (i.e. comments),
+            ACL Scope = A single method,
+            method name: create,
+            role: Any authenticated user,
+            permission to apply = Explicitly grant access
+
+        (third Allow only users who owns comment to modify it)
+        lb acl
+            select model = <model-name> (i.e. comments),
+            ACL Scope = All methods and properties,
+            method name: Write,
+            role: The user owning the object,
+            permission to apply = Explicitly grant access
